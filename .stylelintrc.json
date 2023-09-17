@@ -1,0 +1,15 @@
+{
+    "extends": ["stylelint-config-recommended"],
+    "plugins": ["stylelint-order"],
+    "rules": {
+      "order/order": [
+        "custom-properties",
+        "dollar-variables",
+        "declarations",
+        "at-rules",
+        "rules"
+      ],
+      "order/properties-alphabetical-order": true,
+      "selector-anb-no-unmatchable": null
+    }
+  }
