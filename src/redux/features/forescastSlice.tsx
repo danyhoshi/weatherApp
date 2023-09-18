@@ -3,7 +3,7 @@ import { getPosition } from "../../functions/geoLocal";
 import config from "../../../config";
 import { showTime } from "../../functions/hour";
 
-   interface positionState {
+ export  interface positionState {
     loading: boolean,
     lat: number,
     lon: number
@@ -13,8 +13,8 @@ import { showTime } from "../../functions/hour";
     dataF: {
       time: Array<string>,
       weathercode: Array<number>,
-      maxTemp: Array<number>,
-      minTemp: Array<number>
+      temperature_2m_max: Array<number>,
+      temperature_2m_min: Array<number>
     }
     
     error: null | string
@@ -30,8 +30,8 @@ import { showTime } from "../../functions/hour";
       dataF: {
         time: [],
         weathercode: [],
-        maxTemp: [],
-        minTemp: []
+        temperature_2m_max: [],
+        temperature_2m_min: []
       },
       error: null
   }
