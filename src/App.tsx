@@ -1,23 +1,18 @@
 import './App.css'
 import DayCard from './components/DayCard'
 import { useEffect } from "react"
-import { geoPosition, getPosition, position } from './functions/geoLocal';
-import config from '../config.ts'; 
 import { useDispatch, useSelector } from 'react-redux'
-import { getGeoLocation } from './redux/features/geoLocationSlice'
+import { getForecast } from './redux/features/forescastSlice.tsx';
 import { AppDispatch, RootState } from './redux/store'
   //import { ThunkDispatch } from "@reduxjs/toolkit"; //se importa para que no de problema el tipado del dispatch de thunks
 function App() {
-  
-  
- 
-  
-    const  geoLocation  = useSelector((state: RootState) => state.geoLocation)
+
+    const  forecast  = useSelector((state: RootState) => state.forecast)
    // const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
    const dispatch = useDispatch<AppDispatch>();
   
   useEffect(() => {
-    dispatch(getGeoLocation())
+    dispatch(getForecast())
   }, [])
    
    return (
@@ -27,9 +22,9 @@ function App() {
           <DayCard />
           
         </div>
-        { geoLocation.loading ? 
+        { forecast.loading ? 
           <p>Loading</p>:
-          <p> { geoLocation.lat } { geoLocation.lon } { geoLocation.city }, { geoLocation.stateT }, { geoLocation.country }</p>}
+          <p> { forecast.lat } { forecast.lon } { forecast.city }, { forecast.stateT }, { forecast.country }</p>}
     </>
   )
 }

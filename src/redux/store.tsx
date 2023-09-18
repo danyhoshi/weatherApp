@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import  geoLocationReducer from "./features/geoLocationSlice";
+import  forecastReducer from "./features/forescastSlice"
 
 export const store = configureStore({
     reducer: {
-        geoLocation: geoLocationReducer,
+        forecast: forecastReducer,
     },
 })
 

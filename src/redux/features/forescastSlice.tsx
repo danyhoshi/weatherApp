@@ -35,8 +35,8 @@ import { showTime } from "../../functions/hour";
       },
       error: null
   }
-const getGeoLocation = createAsyncThunk (
-    'weather/getLocation',
+const getForecast = createAsyncThunk (
+    'weather/getForecast',
     async (thunkApi) => {
       const position = await getPosition()
       .then((latLon) => {
@@ -73,19 +73,19 @@ const getGeoLocation = createAsyncThunk (
   )
 
 
-export const geoLocationSlice = createSlice({
-    name: "geoLocation", 
+export const forecastSlice = createSlice({
+    name: "forecast", 
     initialState,
     reducers: {
         
     },
     extraReducers: (builder) => {
-        builder.addCase(getGeoLocation.pending, (state, action) => {
+        builder.addCase(getForecast.pending, (state) => {
           console.log("loading")
           state.loading = true
         })
         // Add reducers for additional action types here, and handle loading state as needed
-        builder.addCase(getGeoLocation.fulfilled, (state, action: PayloadAction<any>) => {
+        builder.addCase(getForecast.fulfilled, (state, action: PayloadAction<any>) => {
           const { lat, lon, city, stateT, country, dataF }  = action.payload;
           state.loading = false;
            console.log(action.payload)
@@ -96,13 +96,13 @@ export const geoLocationSlice = createSlice({
             state.country = country
             state.dataF = dataF;
         })
-        builder.addCase(getGeoLocation.rejected, (state, action: PayloadAction<any>) => {
+        builder.addCase(getForecast.rejected, (state, action: PayloadAction<any>) => {
           state.loading = false
           state.error = action.payload;
         })
       },
 })
 
-export { getGeoLocation } 
+export { getForecast } 
 //export { fetchPokeById } = pokeSlice.actions
-export default geoLocationSlice.reducer; // exportamos el reducer
+export default forecastSlice.reducer; // exportamos el reducer
