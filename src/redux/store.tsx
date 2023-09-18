@@ -1,8 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
+import  geoLocationReducer from "./features/geoLocationSlice";
 
 export const store = configureStore({
     reducer: {
-       // poke: pokeReducer,
+        geoLocation: geoLocationReducer,
     },
 })
 

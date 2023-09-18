@@ -1,5 +1,3 @@
-import React from 'react'
-
 function DayCard() {
   return (
     <div className='containerDay'>
@@ -14,4 +12,4 @@ function DayCard() {
   )
 }
 
-export default DayCard
+export default DayCard;
