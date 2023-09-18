@@ -8,7 +8,13 @@ export interface positionComplete {
   lon: number,
   city: string, 
   stateT: string, 
-  country: string
+  country: string,
+  dataF: {
+    time: Array<string>,
+    weathercode: Array<number>,
+    maxTemp: Array<number>,
+    minTemp: Array<number>
+  }
 }
 export function getPosition() : Promise<position>{
     return new Promise(function(resolve, reject) {
