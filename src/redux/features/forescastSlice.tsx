@@ -104,5 +104,4 @@ export const forecastSlice = createSlice({
 })
 
 export { getForecast } 
-//export { fetchPokeById } = pokeSlice.actions
 export default forecastSlice.reducer; // exportamos el reducer
