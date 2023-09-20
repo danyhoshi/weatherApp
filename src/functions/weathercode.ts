@@ -21,4 +21,5 @@ weathercode.set(72, '../assets/snowy-5.svg');
 weathercode.set(73, '../assets/snowy-6.svg');
 weathercode.set(86, '../assets/snowy-6.svg');
 weathercode.set(95, '../assets/thunder.svg');
+weathercode.set(96, '../assets/thunder.svg');
 export default weathercode;

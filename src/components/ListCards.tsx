@@ -9,6 +9,11 @@ function ListCards() {
     
     const  forecast  = useSelector((state: RootState) => state.forecast)
     const dispatch = useDispatch<AppDispatch>();
+    /*TODO: SEPARAR GEOPOSITION
+                   EL QUE TOMA LOS NOMBRES DE LOS LUGARES
+                   EL FORECAST
+    LLAMAR CON DISPACH AQUI EN EL USEEFFECT Y PASAR LO NECESARIO COMO PARAMETROS
+   */
     React.useEffect(() => {
         dispatch(getForecast())
       }, [])
