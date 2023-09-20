@@ -7,9 +7,5 @@ export const store = configureStore({
     },
 })
 
-// store.subscribe(() => {
-//     console.log('Estado cambio')
-// })
-
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch

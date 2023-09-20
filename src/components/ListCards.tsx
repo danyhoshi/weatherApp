@@ -1,22 +1,20 @@
-import React from 'react'
 import DayCard from './DayCard.tsx'
-import { useDispatch, useSelector } from 'react-redux'
-import { getForecast } from '../redux/features/forescastSlice.tsx';
-import { AppDispatch, RootState } from '../redux/store.tsx'
+import { useSelector } from 'react-redux'
+import { RootState } from '../redux/store.tsx'
 import  weathercode  from "../functions/weathercode.ts"
+
 
 function ListCards() {
     
     const  forecast  = useSelector((state: RootState) => state.forecast)
-    const dispatch = useDispatch<AppDispatch>();
+    //const dispatch = useDispatch<AppDispatch>();
     /*TODO: SEPARAR GEOPOSITION
                    EL QUE TOMA LOS NOMBRES DE LOS LUGARES
                    EL FORECAST
     LLAMAR CON DISPACH AQUI EN EL USEEFFECT Y PASAR LO NECESARIO COMO PARAMETROS
    */
-    React.useEffect(() => {
-        dispatch(getForecast())
-      }, [])
+
+ 
   return (
     <div className='container'>
         {forecast.dataF.time.map((date, index) => {

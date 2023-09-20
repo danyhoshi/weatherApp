@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { getPosition } from "../../functions/geoLocal";
 import config from "../../../config";
-import { showTime } from "../../functions/hour";
+import { position } from "../../functions/geoLocal";
 
  export  interface positionState {
     loading: boolean,
@@ -35,43 +35,47 @@ import { showTime } from "../../functions/hour";
       },
       error: null
   }
-const getForecast = createAsyncThunk (
-    'weather/getForecast',
-    async (thunkApi) => {
-      const position = await getPosition()
-      .then((latLon) => {
-         const place = fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${latLon.lat}&lon=${latLon.lon}&appid=${config.API_KEY}`)
-        .then((response) => (response.ok ? response.json() : Promise.reject(response)))
-        .then((dataPlace) => {
-            const place = { lat: latLon.lat, lon: latLon.lon, city: dataPlace[0].name, stateT: dataPlace[0].state, country: dataPlace[0].country};
-            return place;
-        })
-        .catch((err) => {
-            const message = err.statusText || 'Ocurrio un error fetch openweather';
-            alert(`Error ${err.status}: ${message}`);
-        });
-        return place
-       // return place;
-      })
-      .catch((err) => {
-        const message = err.statusText || 'Ocurrio un error getPosition';
-        return thunkApi.rejectWithValue(message)
-      });
-    
-     const placeF = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${position.lat}&longitude=${position.lon}&hourly=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`)
-      .then((response) => (response.ok ? response.json() : Promise.reject(response)))
-      .then((data) => {
-          console.log(`Temperatura hoy: ${data.hourly.temperature_2m[showTime()]}`);
-          return { lat: position.lat, lon: position.lon, city: position.city, stateT: position.stateT, country: position.country, dataF: data.daily};
-      })
-      .catch((err) => {
-          const message = err.statusText || 'Ocurrio un error';
-          alert(`Error ${err.status}: ${message}`);
-        });
-        return placeF;
+export const getGeoposition = createAsyncThunk ( 
+  'weather/getGeoposition', 
+  async (arg, {rejectWithValue}) => {
+    const position = await getPosition()
+    if(!position) {
+      const message = `An error has ocurred: ${position}`;
+      return rejectWithValue(message)
+    } else {
+      return position;
     }
-  )
+  }
+)
 
+export const getNamePlace = createAsyncThunk ( 
+  'weather/getNamePlace', 
+  async (latLon: position, {rejectWithValue}) => {
+    console.log(latLon.lat)
+    const response = await fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${latLon.lat}&lon=${latLon.lon}&appid=${config.API_KEY}`)
+    if(!response.ok) {
+      const message = `An error has ocurred: ${response.status}`;
+      return rejectWithValue(message)
+    } else {
+      const dataPlace = await response.json();
+     return {city: dataPlace[0].name, stateT: dataPlace[0].state, country: dataPlace[0].country}
+    }
+  }
+)
+
+export const getForecast = createAsyncThunk ( 
+  'weather/getForecast', 
+  async (latLon: position, {rejectWithValue}) => {
+    const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latLon.lat}&longitude=${latLon.lon}&hourly=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`)
+    if(!response.ok) {
+      const message = `An error has ocurred: ${response.status}`;
+      return rejectWithValue(message)
+    } else {
+      const data = await response.json();
+     return {dataF: data.daily}
+    }
+  }
+)
 
 export const forecastSlice = createSlice({
     name: "forecast", 
@@ -80,28 +84,63 @@ export const forecastSlice = createSlice({
         
     },
     extraReducers: (builder) => {
-        builder.addCase(getForecast.pending, (state) => {
+        //para getGeoposition
+        builder.addCase(getGeoposition.pending, (state) => {
           console.log("loading")
           state.loading = true
         })
         // Add reducers for additional action types here, and handle loading state as needed
-        builder.addCase(getForecast.fulfilled, (state, action: PayloadAction<any>) => {
-          const { lat, lon, city, stateT, country, dataF }  = action.payload;
+        builder.addCase(getGeoposition.fulfilled, (state, action: PayloadAction<any>) => {
+          const { lat, lon }  = action.payload;
           state.loading = false;
            console.log(action.payload)
             state.lat = lat
             state.lon = lon
-            state.city = city
-            state.stateT = stateT
-            state.country = country
-            state.dataF = dataF;
         })
-        builder.addCase(getForecast.rejected, (state, action: PayloadAction<any>) => {
+        builder.addCase(getGeoposition.rejected, (state, action: PayloadAction<any>) => {
           state.loading = false
           state.error = action.payload;
         })
-      },
+
+         //PARA pedir el ciudad, estado y pais
+      builder.addCase(getNamePlace.pending, (state) => {
+        console.log("loading getNamePlace")
+        state.loading = true
+      })
+
+      // Add reducers for additional action types here, and handle loading state as needed
+      builder.addCase(getNamePlace.fulfilled, (state, action: PayloadAction<any>) => {
+        const { city, stateT, country }  = action.payload;
+        state.loading = false;
+         console.log(action.payload)
+          state.city = city
+          state.stateT = stateT
+          state.country = country
+         
+      })
+      builder.addCase(getNamePlace.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false
+        state.error = action.payload;
+      })
+
+      //PARA PEDIR EL FORECAST
+      builder.addCase(getForecast.pending, (state) => {
+       // console.log("loading")
+        state.loading = true
+      })
+      // Add reducers for additional action types here, and handle loading state as needed
+      builder.addCase(getForecast.fulfilled, (state, action: PayloadAction<any>) => {
+        const { dataF }  = action.payload;
+        state.loading = false;
+         console.log(action.payload)
+          state.dataF = dataF;
+      })
+
+      builder.addCase(getForecast.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false
+        state.error = action.payload;
+      })
+      }
 })
 
-export { getForecast } 
 export default forecastSlice.reducer; // exportamos el reducer

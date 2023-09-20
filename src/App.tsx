@@ -1,24 +1,35 @@
 import './App.css'
 import ListCards from './components/ListCards.tsx';
-import { useEffect } from "react"
+import React from "react"
 import { useDispatch, useSelector } from 'react-redux'
-import { getForecast } from './redux/features/forescastSlice.tsx';
 import { AppDispatch, RootState } from './redux/store'
+import { position } from './functions/geoLocal.tsx';
+import { getForecast, getGeoposition, getNamePlace } from './redux/features/forescastSlice.tsx';
   //import { ThunkDispatch } from "@reduxjs/toolkit"; //se importa para que no de problema el tipado del dispatch de thunks
 function App() {
 
-  //   const  forecast  = useSelector((state: RootState) => state.forecast)
+    const  forecast  = useSelector((state: RootState) => state.forecast)
   //  // const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
-  //  const dispatch = useDispatch<AppDispatch>();
+   const dispatch = useDispatch<AppDispatch>();
   
-  // useEffect(() => {
-  //   dispatch(getForecast())
-  // }, [])
-   
+  React.useEffect(() => {
+    dispatch(getGeoposition())
+  }, [])
+
+  const handleClick = ()=> {
+    const latLon: position = { lat: forecast.lat, lon: forecast.lon }
+    dispatch(getNamePlace(latLon))
+  }
+
+  const handleClick2 = ()=> {
+    const latLon: position = { lat: forecast.lat, lon: forecast.lon }
+    dispatch(getForecast(latLon))
+  }
    return (
     <>
         <h1 className='title'>Weather App</h1>
-       
+        <button onClick={ handleClick }>Get Place</button>
+        <button onClick={ handleClick2 }>Get Forecast</button>
           <ListCards />
           
       
