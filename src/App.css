@@ -37,6 +37,11 @@ img {
   width: 100%;
 }
 
+button {
+  margin-top: 1rem;
+  width: 200px;
+}
+
 .title {
   box-sizing: border-box;
   color: var(--color-h1);
@@ -99,6 +104,13 @@ img {
 
 .containerDay:hover {
   border: var(--color-in) solid 1px;
+}
+
+.containerG {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
    @media screen and (min-width: 704px) {

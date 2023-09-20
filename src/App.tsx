@@ -19,18 +19,16 @@ function App() {
   const handleClick = ()=> {
     const latLon: position = { lat: forecast.lat, lon: forecast.lon }
     dispatch(getNamePlace(latLon))
-  }
-
-  const handleClick2 = ()=> {
-    const latLon: position = { lat: forecast.lat, lon: forecast.lon }
     dispatch(getForecast(latLon))
   }
+
    return (
     <>
         <h1 className='title'>Weather App</h1>
-        <button onClick={ handleClick }>Get Place</button>
-        <button onClick={ handleClick2 }>Get Forecast</button>
+        <div className='containerG'>
+          <button onClick={ handleClick }>Get Forecast</button>
           <ListCards />
+        </div>
           
       
         {/* { forecast.loading ? 

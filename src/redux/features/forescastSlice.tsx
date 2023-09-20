@@ -13,8 +13,8 @@ import { position } from "../../functions/geoLocal";
     dataF: {
       time: Array<string>,
       weathercode: Array<number>,
-      temperature_2m_max: Array<number>,
-      temperature_2m_min: Array<number>
+      maxTemp: Array<number>,
+      minTemp: Array<number>
     }
     
     error: null | string
@@ -30,8 +30,8 @@ import { position } from "../../functions/geoLocal";
       dataF: {
         time: [],
         weathercode: [],
-        temperature_2m_max: [],
-        temperature_2m_min: []
+        maxTemp: [],
+        minTemp: []
       },
       error: null
   }
@@ -51,7 +51,6 @@ export const getGeoposition = createAsyncThunk (
 export const getNamePlace = createAsyncThunk ( 
   'weather/getNamePlace', 
   async (latLon: position, {rejectWithValue}) => {
-    console.log(latLon.lat)
     const response = await fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${latLon.lat}&lon=${latLon.lon}&appid=${config.API_KEY}`)
     if(!response.ok) {
       const message = `An error has ocurred: ${response.status}`;
@@ -72,7 +71,7 @@ export const getForecast = createAsyncThunk (
       return rejectWithValue(message)
     } else {
       const data = await response.json();
-     return {dataF: data.daily}
+      return {time: data.daily.time,  weathercode: data.daily.weathercode, maxTemp: data.daily.temperature_2m_max, minTemp: data.daily.temperature_2m_min}
     }
   }
 )
@@ -130,10 +129,14 @@ export const forecastSlice = createSlice({
       })
       // Add reducers for additional action types here, and handle loading state as needed
       builder.addCase(getForecast.fulfilled, (state, action: PayloadAction<any>) => {
-        const { dataF }  = action.payload;
+        const { time, weathercode, maxTemp, minTemp }  = action.payload;
         state.loading = false;
          console.log(action.payload)
-          state.dataF = dataF;
+          state.dataF.time = time;
+          state.dataF.weathercode = weathercode;
+          state.dataF.maxTemp = maxTemp;
+          state.dataF.minTemp = minTemp;
+
       })
 
       builder.addCase(getForecast.rejected, (state, action: PayloadAction<any>) => {

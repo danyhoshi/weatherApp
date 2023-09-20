@@ -23,8 +23,8 @@ function ListCards() {
                             city={ forecast.city }
                             stateT= { forecast.stateT }
                             country= { forecast.country }
-                            maxTemp= { forecast.dataF.temperature_2m_max[index] }
-                            minTemp= { forecast.dataF.temperature_2m_min[index]}
+                            maxTemp= { forecast.dataF.maxTemp[index] }
+                            minTemp= { forecast.dataF.minTemp[index]}
                             weathercode = { weathercode.get(forecast.dataF.weathercode[index])  }    
                     />
               </div>)
