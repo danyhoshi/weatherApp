@@ -16,17 +16,23 @@ function App() {
     dispatch(getGeoposition())
   }, [])
 
-  const handleClick = ()=> {
+  React.useEffect(() => {
     const latLon: position = { lat: forecast.lat, lon: forecast.lon }
     dispatch(getNamePlace(latLon))
     dispatch(getForecast(latLon))
+  }, [forecast.lat])
+
+  // const handleClick = ()=> {
+  //   const latLon: position = { lat: forecast.lat, lon: forecast.lon }
+  //   //dispatch(getNamePlace(latLon))
+  //   dispatch(getForecast(latLon))
   }
 
    return (
     <>
         <h1 className='title'>Weather App</h1>
         <div className='containerG'>
-          <button onClick={ handleClick }>Get Forecast</button>
+          {/* <button onClick={ handleClick }>Get Forecast</button> */}
           <ListCards />
         </div>
           
