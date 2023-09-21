@@ -4,11 +4,13 @@ import React from "react"
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from './redux/store'
 import { position } from './functions/geoLocal.tsx';
-import { getForecast, getGeoposition, getNamePlace } from './redux/features/forescastSlice.tsx';
+import { getForecast, getGeoposition } from './redux/features/forescastSlice.tsx';
+import { getNamePlace } from './redux/features/namePlaceSlice.tsx';
   //import { ThunkDispatch } from "@reduxjs/toolkit"; //se importa para que no de problema el tipado del dispatch de thunks
 function App() {
 
     const  forecast  = useSelector((state: RootState) => state.forecast)
+    const  place  = useSelector((state: RootState) => state.namePlace)
   //  // const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
    const dispatch = useDispatch<AppDispatch>();
   
@@ -25,12 +27,15 @@ function App() {
    return (
     <>
         <h1 className='title'>Weather App</h1>
+
         <div className='containerG'>
-    
-          <ListCards />
+        {/* {(place.loading) ? <p>Loading ...</p> :  */}
+          <ListCards /> 
+          {/* } */}
+        
         </div>
     </>
-  )
+    )
 }
 
 export default App

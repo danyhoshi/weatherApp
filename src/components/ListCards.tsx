@@ -7,6 +7,7 @@ import  weathercode  from "../functions/weathercode.ts"
 function ListCards() {
     
     const  forecast  = useSelector((state: RootState) => state.forecast)
+    const  place  = useSelector((state: RootState) => state.namePlace)
     //const dispatch = useDispatch<AppDispatch>();
     /*TODO: SEPARAR GEOPOSITION
                    EL QUE TOMA LOS NOMBRES DE LOS LUGARES
@@ -17,15 +18,17 @@ function ListCards() {
  
   return (
     <div className='container'>
-        {forecast.dataF.time.map((date, index) => {
+       {(!place.country) ? <p>Loading ...</p> :
+       forecast.dataF.time.map((date, index) => {
                 return (<div key = {date} >
                     <DayCard date={ date }
-                            city={ forecast.city }
-                            stateT= { forecast.stateT }
-                            country= { forecast.country }
+                            city={ place.city }
+                            stateT= { place.stateT }
+                            country= { place.country }
                             maxTemp= { forecast.dataF.maxTemp[index] }
                             minTemp= { forecast.dataF.minTemp[index]}
-                            weathercode = { weathercode.get(forecast.dataF.weathercode[index])  }    
+                            weathercode = { weathercode.get(forecast.dataF.weathercode[index]) }
+                            description = {forecast.dataF.description[index] }      
                     />
               </div>)
             })}

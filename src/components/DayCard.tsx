@@ -10,16 +10,18 @@ interface Props {
   country: string,
   maxTemp: number,
   minTemp: number, 
-  weathercode: string
+  weathercode: string, 
+  description: string
 }
 function DayCard(props: Props) {
  
-  const { date, city, stateT, country, maxTemp, minTemp, weathercode } = props;
+  const { date, city, stateT, country, maxTemp, minTemp, weathercode, description } = props;
   console.log("weathercode: " + weathercode)
   return (
     <div className='containerDay'>
         <h2 className='place'>{city}, {stateT}, {country}</h2>
         <h3 className='day'>{ showTimeDay(date) }</h3>
+        <h3 className='description'>{ description }</h3>
         <div className='containerIcon'>
             <img src={ weathercode } alt="forecast" style={ {width:"100", height: "100"}}/>
         </div>

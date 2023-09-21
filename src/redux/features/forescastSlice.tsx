@@ -1,20 +1,18 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { getPosition } from "../../functions/geoLocal";
-import config from "../../../config";
+import weathercodeDescription from "../../functions/weathercodeDescription"
 import { position } from "../../functions/geoLocal";
 
  export  interface positionState {
     loading: boolean,
     lat: number,
     lon: number
-    city: string,
-    stateT: string, 
-    country: string,
     dataF: {
       time: Array<string>,
       weathercode: Array<number>,
       maxTemp: Array<number>,
-      minTemp: Array<number>
+      minTemp: Array<number>,
+      description: Array<string>
     }
     
     error: null | string
@@ -24,14 +22,12 @@ import { position } from "../../functions/geoLocal";
       loading: false,
       lat: 0, 
       lon: 0,
-      city: "",
-      stateT: "", 
-      country: "",
       dataF: {
         time: [],
         weathercode: [],
         maxTemp: [],
-        minTemp: []
+        minTemp: [],
+        description: []
       },
       error: null
   }
@@ -44,20 +40,6 @@ export const getGeoposition = createAsyncThunk (
       return rejectWithValue(message)
     } else {
       return position;
-    }
-  }
-)
-
-export const getNamePlace = createAsyncThunk ( 
-  'weather/getNamePlace', 
-  async (latLon: position, {rejectWithValue}) => {
-    const response = await fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${latLon.lat}&lon=${latLon.lon}&appid=${config.API_KEY}`)
-    if(!response.ok) {
-      const message = `An error has ocurred: ${response.status}`;
-      return rejectWithValue(message)
-    } else {
-      const dataPlace = await response.json();
-     return {city: dataPlace[0].name, stateT: dataPlace[0].state, country: dataPlace[0].country}
     }
   }
 )
@@ -101,27 +83,6 @@ export const forecastSlice = createSlice({
           state.error = action.payload;
         })
 
-         //PARA pedir el ciudad, estado y pais
-      builder.addCase(getNamePlace.pending, (state) => {
-        console.log("loading getNamePlace")
-        state.loading = true
-      })
-
-      // Add reducers for additional action types here, and handle loading state as needed
-      builder.addCase(getNamePlace.fulfilled, (state, action: PayloadAction<any>) => {
-        const { city, stateT, country }  = action.payload;
-        state.loading = false;
-         console.log(action.payload)
-          state.city = city
-          state.stateT = stateT
-          state.country = country
-         
-      })
-      builder.addCase(getNamePlace.rejected, (state, action: PayloadAction<any>) => {
-        state.loading = false
-        state.error = action.payload;
-      })
-
       //PARA PEDIR EL FORECAST
       builder.addCase(getForecast.pending, (state) => {
        // console.log("loading")
@@ -136,6 +97,9 @@ export const forecastSlice = createSlice({
           state.dataF.weathercode = weathercode;
           state.dataF.maxTemp = maxTemp;
           state.dataF.minTemp = minTemp;
+          weathercode.forEach((e: number, index: number) => {
+            state.dataF.description[index] = weathercodeDescription.get(e);
+          });
 
       })
 
