@@ -53,6 +53,7 @@ export const getForecast = createAsyncThunk (
       return rejectWithValue(message)
     } else {
       const data = await response.json();
+      console.log("PASANDO POR GETfORECAST ", data.daily.time,)
       return {time: data.daily.time,  weathercode: data.daily.weathercode, maxTemp: data.daily.temperature_2m_max, minTemp: data.daily.temperature_2m_min}
     }
   }
@@ -67,14 +68,14 @@ export const forecastSlice = createSlice({
     extraReducers: (builder) => {
         //para getGeoposition
         builder.addCase(getGeoposition.pending, (state) => {
-          console.log("loading")
+         // console.log("loading")
           state.loading = true
         })
         // Add reducers for additional action types here, and handle loading state as needed
         builder.addCase(getGeoposition.fulfilled, (state, action: PayloadAction<any>) => {
           const { lat, lon }  = action.payload;
           state.loading = false;
-           console.log(action.payload)
+          // console.log(action.payload)
             state.lat = lat
             state.lon = lon
         })

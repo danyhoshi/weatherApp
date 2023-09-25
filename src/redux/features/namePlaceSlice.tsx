@@ -10,7 +10,7 @@ import { position } from "../../functions/geoLocal";
     error: null | string
    }
 
-  const initialState : nameState = {
+  export const initialState : nameState = {
       loading: false,
       city: "",
       stateT: "", 

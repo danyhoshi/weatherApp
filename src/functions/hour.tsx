@@ -24,9 +24,3 @@ export function dateFormat(date: string) {
     let dateF = arrayDateHour[0].split('-');
     return dateF[2] + '-' + dateF[1] + '-' + dateF[0];
 }
-
-export function dateFormatD(date: string) {
-    console.log('Fecha de hoy: ' + date);
-    let dateF = date.split('-');
-    return dateF[2] + '-' + dateF[1] + '-' + dateF[0];
-}

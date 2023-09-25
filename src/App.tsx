@@ -10,7 +10,7 @@ import { getNamePlace } from './redux/features/namePlaceSlice.tsx';
 function App() {
 
     const  forecast  = useSelector((state: RootState) => state.forecast)
-    const  place  = useSelector((state: RootState) => state.namePlace)
+    //const  place  = useSelector((state: RootState) => state.namePlace)
   //  // const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
    const dispatch = useDispatch<AppDispatch>();
   
@@ -21,7 +21,7 @@ function App() {
   React.useEffect(() => {
     const latLon: position = { lat: forecast.lat, lon: forecast.lon }
     dispatch(getNamePlace(latLon))
-    dispatch(getForecast(latLon))
+    dispatch( getForecast(latLon))
   }, [forecast.lat])
 
    return (
@@ -30,7 +30,7 @@ function App() {
 
         <div className='containerG'>
         {/* {(place.loading) ? <p>Loading ...</p> :  */}
-          <ListCards /> 
+          <ListCards />
           {/* } */}
         
         </div>

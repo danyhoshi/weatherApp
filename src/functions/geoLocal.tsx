@@ -3,19 +3,6 @@ export interface position {
   lon: number
 }
 
-export interface positionComplete {
-  lat: number,
-  lon: number,
-  city: string, 
-  stateT: string, 
-  country: string,
-  dataF: {
-    time: Array<string>,
-    weathercode: Array<number>,
-    maxTemp: Array<number>,
-    minTemp: Array<number>
-  }
-}
 export function getPosition() : Promise<position>{
     return new Promise(function(resolve, reject) {
       navigator.geolocation.getCurrentPosition(function(pos){
@@ -26,9 +13,3 @@ export function getPosition() : Promise<position>{
     })
   }
 
-export let geoPosition = function() {
-    getPosition().then(val => {
-    // console.log("Mi posición: " + val.lon)
-     return val
-    })
-}

@@ -18,7 +18,7 @@ function ListCards() {
  
   return (
     <div className='container'>
-       {(!place.country) ? <p>Loading ...</p> :
+       {(!place.country) || forecast.loading ? <p>Loading ...</p> :
        forecast.dataF.time.map((date, index) => {
                 return (<div key = {date} >
                     <DayCard date={ date }
