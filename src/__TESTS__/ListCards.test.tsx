@@ -118,34 +118,37 @@ describe("ListCards", () => {
   test("Call the Thunk Name Place", async () => {
     const fetchMock = fetch.mockResponse("{city:'Parroquia Las Delicias',stateT:'Aragua State',country:'VE'}", { status: 200 });
     const latLon: position = { lat: 10.2627767, lon: -67.5788659 }
-    const dispatch = jest.fn();
-    const getState = jest.fn().mockReturnValue({
-        forecast: {
-          loading: false,
-          lat: 10.2627946, 
-          lon:-67.5788673,
-          dataF: {
-            time: [],
-            weathercode: [],
-            maxTemp: [],
-            minTemp: [],
-            description: []
-          },
-          error: null
-        },
-        namePlace: {
-          loading: false,
-          city: "",
-          stateT: "", 
-          country: "",
-          error: null
-        }
-    });
+    const store  = setupStore()
+    // const dispatch = jest.fn();
+    // const getState = jest.fn().mockReturnValue({
+    //     forecast: {
+    //       loading: false,
+    //       lat: 10.2627946, 
+    //       lon:-67.5788673,
+    //       dataF: {
+    //         time: [],
+    //         weathercode: [],
+    //         maxTemp: [],
+    //         minTemp: [],
+    //         description: []
+    //       },
+    //       error: null
+    //     },
+    //     namePlace: {
+    //       loading: false,
+    //       city: "",
+    //       stateT: "", 
+    //       country: "",
+    //       error: null
+    //     }
+    // });
       
-    const action = getNamePlace(latLon);
-    await action(dispatch, getState, undefined);
-
-     // expect(fetchMock).toHaveBeenCalled()
+    // const action = getNamePlace(latLon);
+    // await action(dispatch, getState, undefined);
+   
+    // store.dispatch(getForecast(latLon))
+     store.dispatch(getNamePlace(latLon))
+    // expect(fetchMock).toHaveBeenCalled()
      expect(fetchMock).toHaveBeenCalledWith(`https://api.openweathermap.org/geo/1.0/reverse?lat=${latLon.lat}&lon=${latLon.lon}&appid=${config.API_KEY}`)
     });
 
@@ -153,35 +156,37 @@ describe("ListCards", () => {
       const fetchMock = fetch.mockResponse("{time:['2023-09-25','2023-09-26','2023-09-27','2023-09-28','2023-09-29','2023-09-30','2023-10-01'],weathercode:[3,80,3,3,3,3,3],maxTemp:[34.3,34.5,35.3,34.7,35.8,35.6,35.7],minTemp:[24.4,25.2,25.2,25.4,26,26.7,26.3]}", { status: 200 }); //Este sería una respuesta de la API cuando es completada, pero no la uso paa comparar, solo para emular que se recibió respuesta
   
      const latLon: position = { lat: 10.2627767, lon: -67.5788659 }
-   
-        const dispatch = jest.fn();
-        const getState = jest.fn().mockReturnValue({
-          forecast: {
-            loading: false,
-            lat: 10.2627946, 
-            lon:-67.5788673,
-            dataF: {
-              time: [],
-              weathercode: [],
-              maxTemp: [],
-              minTemp: [],
-              description: []
-            },
-            error: null
-          },
-          namePlace: {
-            loading: false,
-            city: "",
-            stateT: "", 
-            country: "",
-            error: null
-          }
-        });
-        const action = getForecast(latLon);
-        await action(dispatch, getState, undefined); //Esto realmente llama a la funcion, jest se va a ejecutar las lineas, solo que no toma en cuenta la respuesta en sí sino, en este caso cuando fue ok
-       expect(fetchMock).toHaveBeenCalledWith(`https://api.open-meteo.com/v1/forecast?latitude=${latLon.lat}&longitude=${latLon.lon}&hourly=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`) //si yo coloco otra cosa que no haya llamado en el codigo, esto falla, por ejemplo si cmbio l latitud con l que llme al thunk y qe es prametro de esta peticion
+     const store = setupStore();
+     store.dispatch(getForecast(latLon));
+     expect(fetchMock).toHaveBeenCalledWith(`https://api.open-meteo.com/v1/forecast?latitude=${latLon.lat}&longitude=${latLon.lon}&hourly=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`) //si yo coloco otra cosa que no haya llamado en el codigo, esto falla, por ejemplo si cmbio l latitud con l que llme al thunk y qe es prametro de esta peticion
+   // const dispatch = jest.fn();
+        // const getState = jest.fn().mockReturnValue({
+        //   forecast: {
+        //     loading: false,
+        //     lat: 10.2627946, 
+        //     lon:-67.5788673,
+        //     dataF: {
+        //       time: [],
+        //       weathercode: [],
+        //       maxTemp: [],
+        //       minTemp: [],
+        //       description: []
+        //     },
+        //     error: null
+        //   },
+        //   namePlace: {
+        //     loading: false,
+        //     city: "",
+        //     stateT: "", 
+        //     country: "",
+        //     error: null
+        //   }
+        // });
+        // const action = getForecast(latLon);
+        // await action(dispatch, getState, undefined); //Esto realmente llama a la funcion, jest se va a ejecutar las lineas, solo que no toma en cuenta la respuesta en sí sino, en este caso cuando fue ok
+       
       });
-//TESTS CON CONSULTA API REAL
+//TESTS CON CONSULTA API
       // test('Change state after get Name place', async () => {
       //   //TODO: HACER QUE LOADING DE FORECAST SEA FALSE PARA QUE NO MUESTRE LOADING EL RENDER
       //   const store  = setupStore()
@@ -214,48 +219,3 @@ describe("ListCards", () => {
       // })
  })
 
- 
-
-
-//   test('reducers', () => {
-//      let state;
-//      state = reducers({forecast:{loading:false,lat:10.2627946,lon:-67.5788673,dataF:{time:[],weathercode:[],maxTemp:[],minTemp:[],description:[]},error:null},namePlace:{loading:false,city:'',stateT:'',country:''}}, {type:'weather/getNamePlace/fulfilled',payload:{city:'Parroquia Las Delicias',stateT:'Aragua State',country:'VE'},meta:{arg:{lat:10.2627946,lon:-67.5788673},requestId:'1AiloLeyHXmbsDCGxR5Kg',requestStatus:'fulfilled'}});
-//      expect(state).toEqual({forecast:{loading:false,lat:10.2627946,lon:-67.5788673,dataF:{time:[],weathercode:[],maxTemp:[],minTemp:[],description:[]},error:null},namePlace:{loading:false,city:'Parroquia Las Delicias',stateT:'Aragua State',country:'VE'}});
-//    });
-//   test("Render the date given to initialState 22-09-2023", async () => { 
-//     const store = setupStore()
-//        const latLon: position = { lat: 10.2627926, lon: -67.5788691 }
-//        store.dispatch(getNamePlace(latLon))
-//        store.dispatch( getForecast(latLon))
-
-//     const getByText = await waitFor(() => {     
-//         console.log("Muestramelo: ", store.getState().namePlace.country, "Aquiiiiiii")
-//         const { getByText } = renderWithProviders(<ListCards />, { store });
-//        // console.log("AQUIIIIIIIIII" + getByText)
-//         return getByText;
-//    }, { timeout: 3000 })   
-    
-    //await waitFor(() => { 
-//      await waitFor(() => {  
-//         const date = getByText(/22-09-2023/i);
-//         expect(date).toBeInTheDocument();
-//    }, { timeout: 3000 });
-//      expect(getByText(/loading/i)).toBeInTheDocument();
-//      // expect(await findByText(/Loading/i, undefined, { timeout: 4000 })).toBeInTheDocument();
-//   })
-
-//   test('Sets up initial state state with actions', async () => {
-//     const store = setupStore()
-//     const latLon: position = { lat: 10.2627926, lon: -67.5788691 }
-//     store.dispatch(getNamePlace(latLon))
-//     store.dispatch( getForecast(latLon))
-  
-//     const { getByText } = await waitForElement(() => renderWithProviders(<ListCards />, { store }))
-    
-//   })
-
-//   test("Render the description given to initialState Overcast", () => {      
-//     const description = screen.getByRole("heading", {name: /Overcast/i});
-//     console.log(prettyDOM(description));
-//     expect(description).toBeInTheDocument();
-//   })
