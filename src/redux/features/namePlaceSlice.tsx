@@ -47,7 +47,7 @@ export const namePlaceSlice = createSlice({
       builder.addCase(getNamePlace.fulfilled, (state, action: PayloadAction<any>) => {
         const { city, stateT, country }  = action.payload;
         state.loading = false;
-         console.log(action.payload)
+        // console.log(action.payload)
           state.city = city
           state.stateT = stateT
           state.country = country

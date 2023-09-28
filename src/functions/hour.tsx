@@ -24,3 +24,11 @@ export function dateFormat(date: string) {
     let dateF = arrayDateHour[0].split('-');
     return dateF[2] + '-' + dateF[1] + '-' + dateF[0];
 }
+
+export function today() {
+    let myDate = new Date();
+    const month: number = myDate.getMonth() + 1
+    const day = (myDate.getDate() < 10) ? "0" + myDate.getDate() : myDate.getDate().toString();
+    const monthS = (month < 10) ? "0" + month : month.toString();
+     return myDate.getFullYear() + '-' + monthS + '-' + day;
+} 

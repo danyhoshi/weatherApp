@@ -53,7 +53,7 @@ export const getForecast = createAsyncThunk (
       return rejectWithValue(message)
     } else {
       const data = await response.json();
-      console.log("PASANDO POR GETfORECAST ", data.daily.time,)
+    //  console.log("PASANDO POR GETfORECAST ", data.daily.time,)
       return {time: data.daily.time,  weathercode: data.daily.weathercode, maxTemp: data.daily.temperature_2m_max, minTemp: data.daily.temperature_2m_min}
     }
   }
@@ -93,14 +93,13 @@ export const forecastSlice = createSlice({
       builder.addCase(getForecast.fulfilled, (state, action: PayloadAction<any>) => {
         const { time, weathercode, maxTemp, minTemp }  = action.payload;
         state.loading = false;
-         console.log(action.payload)
-          state.dataF.time = time;
-          state.dataF.weathercode = weathercode;
-          state.dataF.maxTemp = maxTemp;
-          state.dataF.minTemp = minTemp;
-          weathercode.forEach((e: number, index: number) => {
-            state.dataF.description[index] = weathercodeDescription.get(e);
-          });
+        state.dataF.time = time;
+        state.dataF.weathercode = weathercode;
+        state.dataF.maxTemp = maxTemp;
+        state.dataF.minTemp = minTemp;
+        weathercode.forEach((e: number, index: number) => {
+          state.dataF.description[index] = weathercodeDescription.get(e);
+        });
 
       })
 

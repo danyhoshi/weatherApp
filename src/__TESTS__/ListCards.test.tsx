@@ -1,4 +1,4 @@
-import { render, fireEvent, screen, waitFor, } from '@testing-library/react'
+import { render, fireEvent, screen, waitFor } from '@testing-library/react'
 // We're using our own custom render function and not RTL's render.
 import { renderWithProviders } from '../utils/test-utils'
 import React from 'react'
@@ -15,6 +15,9 @@ import App from '../App.tsx'
 import { act } from 'react-dom/test-utils';
 import namePlaceReducer, { getNamePlace, nameState  } from '../redux/features/namePlaceSlice'
 import forecastReducer, { positionState } from '../redux/features/forescastSlice.tsx'
+import fetch from 'jest-fetch-mock';
+import config from "../../config.ts";
+import { today } from '../functions/hour.tsx'
 describe("ListCards", () => {
 
 //   beforeEach(async() => {
@@ -47,6 +50,10 @@ describe("ListCards", () => {
      },
      error: null
  }
+
+ beforeEach(() => {
+  fetch.resetMocks();
+ })
   test("Get the same", () => {
      const initialState: nameState = stateName 
      const action = { type: 'unknown' }
@@ -82,7 +89,7 @@ describe("ListCards", () => {
      expect(forecastReducer(initialState, action)).toEqual(expectedState)
   })
 
-  test("Render Forecast", () => {
+  test("Render Forecast date", () => {
      const initialStatePosition: positionState = {loading:false,lat:10.2627946,lon:-67.5788673,dataF:{time:['2023-09-24','2023-09-25','2023-09-26','2023-09-27','2023-09-28','2023-09-29','2023-09-30'],weathercode:[3,3,3,95,3,3,3],maxTemp:[31.9,35.1,35.6,33,35,35.6,35.1],minTemp:[25.9,24,25.2,25.8,25.1,26.5,26.3],description:['Overcast','Overcast','Overcast','Thunderstorm','Overcast','Overcast','Overcast']},error:null}
      const initialStateNamePlace: nameState = { loading:false,city:'Parroquia Las Delicias',stateT:'Aragua State',country:'VE', error: null }
 
@@ -108,8 +115,106 @@ describe("ListCards", () => {
     expect(getByText(/Loading/i)).toBeInTheDocument();
   })
 
+  test("Call the Thunk Name Place", async () => {
+    const fetchMock = fetch.mockResponse("{city:'Parroquia Las Delicias',stateT:'Aragua State',country:'VE'}", { status: 200 });
+    const latLon: position = { lat: 10.2627767, lon: -67.5788659 }
+    const dispatch = jest.fn();
+    const getState = jest.fn().mockReturnValue({
+        forecast: {
+          loading: false,
+          lat: 10.2627946, 
+          lon:-67.5788673,
+          dataF: {
+            time: [],
+            weathercode: [],
+            maxTemp: [],
+            minTemp: [],
+            description: []
+          },
+          error: null
+        },
+        namePlace: {
+          loading: false,
+          city: "",
+          stateT: "", 
+          country: "",
+          error: null
+        }
+    });
+      
+    const action = getNamePlace(latLon);
+    await action(dispatch, getState, undefined);
+
+     // expect(fetchMock).toHaveBeenCalled()
+     expect(fetchMock).toHaveBeenCalledWith(`https://api.openweathermap.org/geo/1.0/reverse?lat=${latLon.lat}&lon=${latLon.lon}&appid=${config.API_KEY}`)
+    });
+
+    test("Call the Thunk Forecast", async () => {
+      const fetchMock = fetch.mockResponse("{time:['2023-09-25','2023-09-26','2023-09-27','2023-09-28','2023-09-29','2023-09-30','2023-10-01'],weathercode:[3,80,3,3,3,3,3],maxTemp:[34.3,34.5,35.3,34.7,35.8,35.6,35.7],minTemp:[24.4,25.2,25.2,25.4,26,26.7,26.3]}", { status: 200 }); //Este sería una respuesta de la API cuando es completada, pero no la uso paa comparar, solo para emular que se recibió respuesta
+  
+     const latLon: position = { lat: 10.2627767, lon: -67.5788659 }
+   
+        const dispatch = jest.fn();
+        const getState = jest.fn().mockReturnValue({
+          forecast: {
+            loading: false,
+            lat: 10.2627946, 
+            lon:-67.5788673,
+            dataF: {
+              time: [],
+              weathercode: [],
+              maxTemp: [],
+              minTemp: [],
+              description: []
+            },
+            error: null
+          },
+          namePlace: {
+            loading: false,
+            city: "",
+            stateT: "", 
+            country: "",
+            error: null
+          }
+        });
+        const action = getForecast(latLon);
+        await action(dispatch, getState, undefined); //Esto realmente llama a la funcion, jest se va a ejecutar las lineas, solo que no toma en cuenta la respuesta en sí sino, en este caso cuando fue ok
+       expect(fetchMock).toHaveBeenCalledWith(`https://api.open-meteo.com/v1/forecast?latitude=${latLon.lat}&longitude=${latLon.lon}&hourly=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`) //si yo coloco otra cosa que no haya llamado en el codigo, esto falla, por ejemplo si cmbio l latitud con l que llme al thunk y qe es prametro de esta peticion
+      });
+//TESTS CON CONSULTA API REAL
+      // test('Change state after get Name place', async () => {
+      //   //TODO: HACER QUE LOADING DE FORECAST SEA FALSE PARA QUE NO MUESTRE LOADING EL RENDER
+      //   const store  = setupStore()
+      //   const latLon: position = { lat: 10.2627767, lon: -67.5788659 }
+      //   store.dispatch(getForecast(latLon))
+      //   store.dispatch(getNamePlace(latLon))
+      //   await waitFor(() => {
+      //     console.log("NamePlace: ", store.getState().namePlace)
+      //     console.log("Forecast: ", store.getState().forecast)
+      //     // renderWithProviders(<ListCards />, {
+      //     //   preloadedState: {
+      //     //     forecast: store.getState().forecast,
+      //     //     namePlace: store.getState().namePlace
+      //     //   }})
+      //     expect(store.getState().namePlace.country).toBe('VE');
+      //    // expect(screen.getByText('27-09-2023')).toBeInTheDocument();
+      //   }, {timeout: 6000});    
+      // })
 
 
+      // test('Set Forecast state', async () => {
+      //   const store = setupStore()
+      //   const latLon: position = { lat: 10.2627767, lon: -67.5788659 }
+      //   store.dispatch(getForecast(latLon))
+      //   await waitFor(() => {
+      //    expect(store.getState().forecast.dataF.time[0]).toEqual(today())
+      //    // const { getByText } = renderWithProviders(<ListCards />, { store })
+      //    // expect(getByText('VE')).toBeInTheDocument();
+      //   }, {timeout: 4000});
+      // })
+ })
+
+ 
 
 
 //   test('reducers', () => {
@@ -154,4 +259,3 @@ describe("ListCards", () => {
 //     console.log(prettyDOM(description));
 //     expect(description).toBeInTheDocument();
 //   })
-})

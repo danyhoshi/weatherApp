@@ -16,7 +16,7 @@ interface Props {
 function DayCard(props: Props) {
  
   const { date, city, stateT, country, maxTemp, minTemp, weathercode, description } = props;
-  console.log("weathercode: " + weathercode)
+ // console.log("weathercode: " + weathercode)
   return (
     <div className='containerDay'>
         <h2 className='place'>{city}, {stateT}, {country}</h2>
